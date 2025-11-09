@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: CConnet
+  data:
+    mongodb:
+      uri: ${MONGODBURI}
+server:
+  port: 8080
