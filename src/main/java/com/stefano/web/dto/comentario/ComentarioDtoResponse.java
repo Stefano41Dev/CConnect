@@ -1,7 +1,9 @@
 package com.stefano.web.dto.comentario;
 
-import java.time.LocalDateTime;
+import lombok.Builder;
 
+import java.time.LocalDateTime;
+@Builder
 public record ComentarioDtoResponse (
         String username,
         String contenido,
