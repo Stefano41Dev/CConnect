@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -15,15 +16,16 @@ public class PublicacionMapper {
     public Publicacion toEntity (PublicacionDtoRequest publicacionDtoRequest) {
         return Publicacion.builder()
                 .contenido(publicacionDtoRequest.contenido())
-                .fechaPublicacion(LocalDateTime.now())
                 .build();
     }
     public PublicacionDtoResponse toDto (Publicacion publicacion) {
         return PublicacionDtoResponse.builder()
-                //.usernameAutor(publicacion.getId())
                 .contenido(publicacion.getContenido())
                 .fechaPublicacion(publicacion.getFechaPublicacion())
-                .comentarios(publicacion.getComentarios().stream().map(comentarioMapper::toDto).toList())
+                .comentarios(publicacion.getComentarios() == null ? List.of() :
+                        publicacion.getComentarios().stream()
+                                .map(comentarioMapper::toDto)
+                                .toList())
                 .build();
 
     }

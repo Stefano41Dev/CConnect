@@ -1,5 +1,6 @@
 package com.stefano.application.services.Impl;
 
+import com.stefano.application.exception.ErrorNegocio;
 import com.stefano.application.security.JwtService;
 import com.stefano.application.services.AuthService;
 import com.stefano.domain.models.Usuario;
@@ -8,6 +9,7 @@ import com.stefano.web.dto.usuario.AuthRequest;
 import com.stefano.web.dto.usuario.AuthResponse;
 import com.stefano.web.dto.usuario.RegisterRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,10 +24,10 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthResponse register(RegisterRequest request) {
         if (usuarioRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("El nombre de usuario ya está en uso.");
+            throw new ErrorNegocio("El nombre de usuario ya está en uso.",HttpStatus.CONFLICT);
         }
         if (usuarioRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("El email ya está en uso.");
+            throw new ErrorNegocio("El email ya está en uso.",HttpStatus.CONFLICT);
         }
 
         Usuario user = new Usuario();
@@ -43,10 +45,10 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthResponse login(AuthRequest request) {
         Usuario user = usuarioRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado."));
+                .orElseThrow(() -> new ErrorNegocio("Usuario no encontrado.", HttpStatus.NOT_FOUND));
 
         if (!bCryptPasswordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
-            throw new RuntimeException("Contraseña incorrecta.");
+            throw new ErrorNegocio("Contraseña incorrecta.", HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
         String token = jwtService.generateToken(user.getUsername());
