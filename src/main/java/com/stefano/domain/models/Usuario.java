@@ -18,4 +18,5 @@ public class Usuario {
     private String passwordHash;
     private List<String> amigosIds;
 
+
 }
